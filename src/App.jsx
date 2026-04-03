@@ -1,4 +1,6 @@
 import { useState } from "react";
+const API_URL = "http://www.omdbapi.com/?i=tt3896198&apikey=2d91e9ce";
+
 
 
 
@@ -6,15 +8,33 @@ import { useState } from "react";
 function App() {
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [movies, setMovies] = useState([]);
+
+  const searchMovies = async (title) => {
+    const response = await fetch(`${API_URL}&s=${title}`);
+    const data = await response.json();
+
+    setMovies(data.Search || []);
+  };
   return (
     <div className="app">
       <h1>Streamify</h1>
 
       <div className="search">
-        <input placeholder="Search for movies..." 
-        value={searchTerm}
-        onChange={(e)=>setSearchTerm(e.target.value)}
+        <input placeholder="Search for movies..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
+
+        <button onClick={() => searchMovies(searchTerm)}>
+          Search
+        </button>
+      </div>
+
+      <div>
+        {movies.map((movie) => (
+          <p key={movie.imdbID}>{movie.Title}</p>
+        ))}
       </div>
       <p>Searching for: {searchTerm}</p>
     </div>
