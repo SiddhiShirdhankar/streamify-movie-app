@@ -1,4 +1,5 @@
 import { useState } from "react";
+import MovieCard from "./components/MovieCard";
 const API_URL = "http://www.omdbapi.com/?i=tt3896198&apikey=2d91e9ce";
 
 
@@ -32,9 +33,11 @@ function App() {
       </div>
 
       <div>
-        {movies.map((movie) => (
-          <p key={movie.imdbID}>{movie.Title}</p>
-        ))}
+        <div className="movies">
+  {movies.map((movie) => (
+    <MovieCard key={movie.imdbID} movie={movie} />
+  ))}
+</div>
       </div>
       <p>Searching for: {searchTerm}</p>
     </div>
