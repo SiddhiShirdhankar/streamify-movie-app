@@ -11,6 +11,7 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [type, setType] = useState("all");
 
   const searchMovies = async (title) => {
     if (!title) return;
@@ -35,10 +36,16 @@ function App() {
     }
   };
 
-  // Default search on load
+  // Default search on page load
   useEffect(() => {
     searchMovies("Harry Potter");
   }, []);
+
+  // Filter logic
+  const filteredMovies =
+    type === "all"
+      ? movies
+      : movies.filter((movie) => movie.Type === type);
 
   return (
     <div className="app">
@@ -59,16 +66,23 @@ function App() {
         <button onClick={() => searchMovies(searchTerm)}>
           Search
         </button>
+
+        {/* Type Filter */}
+        <select onChange={(e) => setType(e.target.value)}>
+          <option value="all">All</option>
+          <option value="movie">Movie</option>
+          <option value="series">Series</option>
+        </select>
       </div>
 
-      {/* ✅ Improved Conditional Rendering */}
+      {/* Conditional Rendering */}
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p>{error}</p>
-      ) : movies.length > 0 ? (
+      ) : filteredMovies.length > 0 ? (
         <div className="movies">
-          {movies.map((movie) => (
+          {filteredMovies.map((movie) => (
             <MovieCard key={movie.imdbID} movie={movie} />
           ))}
         </div>
