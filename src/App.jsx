@@ -1,9 +1,7 @@
-
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MovieCard from "./components/MovieCard";
 
-const API_URL = "http://www.omdbapi.com/?i=tt3896198&apikey=2d91e9ce";
+const API_URL = "http://www.omdbapi.com/?apikey=2d91e9ce";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,6 +25,11 @@ function App() {
     }
   };
 
+  // ✅ Correct place for useEffect
+  useEffect(() => {
+    searchMovies("Batman");
+  }, []);
+
   return (
     <div className="app">
       <h1>Streamify</h1>
@@ -48,7 +51,6 @@ function App() {
         </button>
       </div>
 
-      {/* Conditional Rendering */}
       {loading ? (
         <p>Loading...</p>
       ) : movies.length > 0 ? (
