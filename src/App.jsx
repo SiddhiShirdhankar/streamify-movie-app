@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import MovieCard from "./components/MovieCard";
 import "./App.css";
+import axios from "axios";
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 const API_URL = `http://www.omdbapi.com/?apikey=${API_KEY}`;
@@ -9,25 +10,32 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const searchMovies = async (title) => {
     if (!title) return;
 
     try {
       setLoading(true);
+      setError("");
 
-      const response = await fetch(`${API_URL}&s=${title}`);
-      const data = await response.json();
+      const response = await axios.get(`${API_URL}&s=${title}`);
+      const data = response.data;
 
-      setMovies(data.Search || []);
-    } catch (error) {
-      console.error("Error fetching movies:", error);
+      if (data.Response === "False") {
+        setMovies([]);
+        setError(data.Error);
+      } else {
+        setMovies(data.Search);
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Correct place for useEffect
+  // Default search on load
   useEffect(() => {
     searchMovies("Harry Potter");
   }, []);
@@ -53,8 +61,11 @@ function App() {
         </button>
       </div>
 
+      {/* ✅ Improved Conditional Rendering */}
       {loading ? (
         <p>Loading...</p>
+      ) : error ? (
+        <p>{error}</p>
       ) : movies.length > 0 ? (
         <div className="movies">
           {movies.map((movie) => (
