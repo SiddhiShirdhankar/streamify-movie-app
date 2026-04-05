@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import MovieCard from "./components/MovieCard";
+import "./App.css";
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 const API_URL = `http://www.omdbapi.com/?apikey=${API_KEY}`;
@@ -28,7 +29,7 @@ function App() {
 
   // ✅ Correct place for useEffect
   useEffect(() => {
-    searchMovies("Batman");
+    searchMovies("Harry Potter");
   }, []);
 
   return (

@@ -5,11 +5,8 @@ const MovieCard = ({ movie }) => {
         src={movie.Poster !== "N/A" ? movie.Poster : ""}
         alt={movie.Title}
       />
-
-      <div>
-        <h3>{movie.Title}</h3>
-        <p>{movie.Year}</p>
-      </div>
+      <h3>{movie.Title}</h3>
+      <p>{movie.Year}</p>
     </div>
   );
 };
