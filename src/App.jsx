@@ -9,9 +9,13 @@ const API_URL = `http://www.omdbapi.com/?apikey=${API_KEY}`;
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [movies, setMovies] = useState([]);
+  const [detailedMovies, setDetailedMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const [type, setType] = useState("all");
+  const [genre, setGenre] = useState("all");
+  const [rating, setRating] = useState("all");
 
   const searchMovies = async (title) => {
     if (!title) return;
@@ -25,10 +29,23 @@ function App() {
 
       if (data.Response === "False") {
         setMovies([]);
+        setDetailedMovies([]);
         setError(data.Error);
-      } else {
-        setMovies(data.Search);
+        return;
       }
+
+      setMovies(data.Search);
+
+      // 🔥 Fetch details for each movie
+      const detailedData = await Promise.all(
+        data.Search.map(async (movie) => {
+          const res = await axios.get(`${API_URL}&i=${movie.imdbID}`);
+          return res.data;
+        })
+      );
+
+      setDetailedMovies(detailedData);
+
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -36,16 +53,22 @@ function App() {
     }
   };
 
-  // Default search on page load
   useEffect(() => {
     searchMovies("Harry Potter");
   }, []);
 
-  // Filter logic
-  const filteredMovies =
-    type === "all"
-      ? movies
-      : movies.filter((movie) => movie.Type === type);
+  // 🎯 Filtering logic
+  const filteredMovies = detailedMovies.filter((movie) => {
+    const matchesType = type === "all" || movie.Type === type;
+
+    const matchesGenre =
+      genre === "all" || movie.Genre?.includes(genre);
+
+    const matchesRating =
+      rating === "all" || Number(movie.imdbRating) >= Number(rating);
+
+    return matchesType && matchesGenre && matchesRating;
+  });
 
   return (
     <div className="app">
@@ -73,9 +96,24 @@ function App() {
           <option value="movie">Movie</option>
           <option value="series">Series</option>
         </select>
+
+        {/* Genre Filter */}
+        <select onChange={(e) => setGenre(e.target.value)}>
+          <option value="all">All Genres</option>
+          <option value="Action">Action</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Drama">Drama</option>
+        </select>
+
+        {/* Rating Filter */}
+        <select onChange={(e) => setRating(e.target.value)}>
+          <option value="all">All Ratings</option>
+          <option value="7">7+</option>
+          <option value="8">8+</option>
+          <option value="9">9+</option>
+        </select>
       </div>
 
-      {/* Conditional Rendering */}
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
