@@ -1,89 +1,185 @@
-/* Overall App */
+/* =========================================
+   1. GLOBAL & LAYOUT (Cinematic Dark Theme)
+   ========================================= */
+:root {
+  --primary: #f43f5e;       /* Streamify Pink/Red */
+  --bg-deep: #080a0f;       /* Rich Near-Black */
+  --bg-spotlight: #161b22;  /* Dark Slate for Center */
+  --card-bg: #111827;       /* Dark Charcoal for Cards */
+  --text-muted: #94a3b8;    /* Slate Gray for Details */
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
 .app {
   text-align: center;
-  background-color: #0f172a;
+  /* Premium Radial Gradient (The "Spotlight" effect) */
+  background: radial-gradient(circle at center 10%, var(--bg-spotlight) 0%, var(--bg-deep) 100%);
+  background-attachment: fixed;
   min-height: 100vh;
   color: white;
-  padding: 20px;
+  padding: 10px 20px 60px; /* Reduced top padding to move Title UP */
+  font-family: var(--font-main);
 }
 
-/* Title */
+/* =========================================
+   2. REFINED TITLE (Smaller & Upward)
+   ========================================= */
 h1 {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  color: rgb(215, 210, 213);
+  font-size: 3.2rem; 
+  font-weight: 900;
+  margin: 0 0 25px 0; /* Tightened bottom margin to pull search bar up */
+  padding: 15px 0;    /* Space to prevent gradient clipping */
+  line-height: 1.2;
+  letter-spacing: -1.5px;
+  text-transform: uppercase;
+
+  /* White-to-Pink Vertical Gradient */
+  background: linear-gradient(180deg, #FFFFFF 40%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Subtle Brand Glow */
+  filter: drop-shadow(0 0 15px rgba(244, 63, 94, 0.2));
+  transition: transform 0.3s ease;
 }
 
-/* Search Section */
+h1:hover {
+  transform: scale(1.02);
+}
+
+/* =========================================
+   3. SEARCH & FILTERS (Perfect Alignment)
+   ========================================= */
 .search {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 30px;
+  gap: 12px;
+  max-width: 1000px;
+  margin: 0 auto 45px;
+  background: rgba(30, 41, 59, 0.3);
+  padding: 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Input */
-.search input {
-  padding: 12px;
-  width: 300px;
-  border-radius: 8px;
-  border: none;
+/* Force all search elements to the same height */
+.search input, 
+.search button, 
+.search select {
+  height: 50px; 
+  border-radius: 12px;
+  border: 1px solid #334155;
+  font-size: 0.95rem;
+  box-sizing: border-box;
   outline: none;
+  transition: all 0.2s ease;
 }
 
-/* Button */
+.search input {
+  flex: 2;
+  min-width: 250px;
+  padding: 0 20px;
+  background: #080a0f;
+  color: white;
+}
+
+.search input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
+}
+
 .search button {
-  padding: 12px 20px;
-  background-color: #f43f5e;
+  padding: 0 25px;
+  background-color: var(--primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  font-weight: 700;
   cursor: pointer;
 }
 
 .search button:hover {
   background-color: #e11d48;
+  box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
 }
 
-/* Dropdowns */
 .search select {
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
-}
-
-/* Movies Grid */
-.movies {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-  padding: 20px;
-}
-
-.movie {
-  background: #1e293b;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.3s ease;
+  padding: 0 10px;
+  background: #1f2937;
+  color: white;
   cursor: pointer;
 }
 
+/* =========================================
+   4. MOVIE GRID & CARDS
+   ========================================= */
+.movies {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.movie {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 .movie:hover {
-  transform: scale(1.05);
+  transform: translateY(-10px);
+  border-color: rgba(244, 63, 94, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
 }
 
 .movie img {
   width: 100%;
-  height: 350px;
+  height: 330px;
   object-fit: cover;
 }
 
 .movie-info {
-  padding: 15px;
+  padding: 18px;
+  text-align: left;
 }
 
 .movie-info h3 {
-  margin-bottom: 10px;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
+  margin: 0 0 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #f8fafc;
+}
+
+.movie-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.rating-tag {
+  background: rgba(250, 204, 21, 0.1);
+  color: #facc15;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+/* =========================================
+   5. RESPONSIVE DESIGN
+   ========================================= */
+@media (max-width: 768px) {
+  h1 { font-size: 2.5rem; }
+  .search { flex-direction: column; align-items: stretch; }
+  .search input, .search button, .search select { width: 100%; }
 }
