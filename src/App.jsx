@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import MovieCard from "./components/MovieCard";
 import "./App.css";
-import axios from "axios";
+import {
+  searchMoviesAPI,
+  getMovieDetailsAPI,
+} from "./services/movieService";
 
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 const API_URL = `http://www.omdbapi.com/?apikey=${API_KEY}`;
@@ -17,41 +20,44 @@ function App() {
   const [genre, setGenre] = useState("all");
   const [rating, setRating] = useState("all");
 
-  const searchMovies = async (title) => {
-    if (!title) return;
+const searchMovies = async (title) => {
+  if (!title) return;
 
-    try {
-      setLoading(true);
-      setError("");
+  try {
+    setLoading(true);
+    setError("");
 
-      const response = await axios.get(`${API_URL}&s=${title}`);
-      const data = response.data;
+    // Step 1: Search basic movies
+    const data = await searchMoviesAPI(title);
 
-      if (data.Response === "False") {
-        setMovies([]);
-        setDetailedMovies([]);
-        setError(data.Error);
-        return;
-      }
-
-      setMovies(data.Search);
-
-      // 🔥 Fetch details for each movie
-      const detailedData = await Promise.all(
-        data.Search.map(async (movie) => {
-          const res = await axios.get(`${API_URL}&i=${movie.imdbID}`);
-          return res.data;
-        })
-      );
-
-      setDetailedMovies(detailedData);
-
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+    if (data.Response === "False") {
+      setMovies([]);
+      setError(data.Error);
+      return;
     }
-  };
+
+    // Step 2: Fetch detailed data
+    const detailedData = await Promise.all(
+      data.Search.map(async (movie) => {
+        try {
+          return await getMovieDetailsAPI(movie.imdbID);
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    // Remove failed results
+    setDetailedMovies(detailedData.filter(Boolean));
+
+  } catch (err) {
+    setError("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+    
 
   useEffect(() => {
     searchMovies("Harry Potter");
